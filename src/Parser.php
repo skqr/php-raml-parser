@@ -252,15 +252,22 @@ class Parser
                     } else {
                         $trait = $traits[$traitName];
                     }
-                    $newArray = array_replace_recursive($newArray, $this->replaceTraits($trait, $traits, $path, $name));
+
+                    $replaced = $this->replaceTraits($trait, $traits, $path, $name);
+
+                    if (is_array($replaced)) {
+                        $newArray = array_replace_recursive($newArray, $replaced);
+                    }
                 }
             } else {
                 $newValue = $this->replaceTraits($value, $traits, $path, $name);
 
-                if (isset($newArray[$key])) {
-                    $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);
-                } else {
-                    $newArray[$key] = $newValue;
+                if (is_array($newValue)) {
+                    if (isset($newArray[$key])) {
+                        $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);
+                    } else {
+                        $newArray[$key] = $newValue;
+                    }
                 }
             }
 
